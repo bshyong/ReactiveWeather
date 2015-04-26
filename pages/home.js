@@ -14,9 +14,16 @@ var {
 var HomePage = React.createClass({
   getInitialState: function() {
     return {
-      input: '',
       response: '',
+      initialPosition: 'unknown',
     }
+  },
+
+  componentDidMount: function() {
+    navigator.geolocation.getCurrentPosition(
+      (initialPosition) => this.setState({initialPosition}),
+      (error) => console.error(error)
+    );
   },
 
   setLocation: function() {
@@ -34,6 +41,22 @@ var HomePage = React.createClass({
       }.bind(this));
   },
 
+  fetchWeather: function() {
+    if (this.state.initialPosition.coords) {
+      this.setState({response: 'fetching weather: ' + JSON.stringify(this.state.initialPosition.coords)})
+      var requestUrl = 'https://api.forecast.io/forecast/a7eed883dbeb4897fc10e150bc938da0/' + this.state.initialPosition.coords.latitude + ',' + this.state.initialPosition.coords.longitude
+      Request
+        .get(requestUrl)
+        .end(function(err, res){
+          if (res.ok) {
+            this.setState({response: 'Success! ' + JSON.stringify(res)});
+          } else {
+            this.setState({response: 'Oh no! error '});
+          }
+        }.bind(this));
+    }
+  },
+
   render: function() {
     return (
       <View style={styles.container}>
@@ -43,9 +66,9 @@ var HomePage = React.createClass({
             onChangeText={(text) => this.setState({input: text})}
           />
           <Text>{this.state.response}</Text>
-          <TouchableHighlight onPress={this.setLocation}>
+          <TouchableHighlight onPress={this.fetchWeather}>
             <Text style={styles.instructions}>
-              Set Location
+              Fetch Weather
             </Text>
           </TouchableHighlight>
         </View>
