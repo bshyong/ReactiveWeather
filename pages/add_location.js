@@ -8,11 +8,28 @@ var {
 } = React;
 
 var AddLocationPage = React.createClass({
+
+  getInitialState: function() {
+    return {
+      initialPosition: 'unknown',
+    }
+  },
+
+  componentDidMount: function() {
+    navigator.geolocation.getCurrentPosition(
+      (initialPosition) => this.setState({initialPosition}),
+      (error) => console.error(error)
+    );
+  },
+
   render: function() {
     return (
       <View style={styles.container}>
         <Text style={styles.welcome}>
           Add a location here
+        </Text>
+        <Text style={styles.welcome}>
+          Current location: {JSON.stringify(this.state.initialPosition)}
         </Text>
       </View>
     );
