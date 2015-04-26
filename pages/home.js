@@ -1,6 +1,8 @@
 'use strict';
 
 var React = require('react-native');
+var Request = require('superagent');
+
 var {
   StyleSheet,
   Text,
@@ -13,11 +15,23 @@ var HomePage = React.createClass({
   getInitialState: function() {
     return {
       input: '',
+      response: '',
     }
   },
 
   setLocation: function() {
-    return
+    this.setState({response: 'sending a request'})
+    Request
+      .post('http://postbin.hackyon.com/9142B0E5DE')
+      .send({ text: this.state.input})
+      .set('Accept', 'application/json')
+      .end(function(err, res){
+        if (res.ok) {
+          this.setState({response: 'Success! ' + JSON.stringify(res.body)});
+        } else {
+          this.setState({response: 'Oh no! error ' + res.text});
+        }
+      }.bind(this));
   },
 
   render: function() {
@@ -28,9 +42,9 @@ var HomePage = React.createClass({
             style={{height: 40, width: 300, margin: 10, borderColor: 'gray', borderWidth: 1}}
             onChangeText={(text) => this.setState({input: text})}
           />
-          <Text>{this.state.input}</Text>
+          <Text>{this.state.response}</Text>
           <TouchableHighlight onPress={this.setLocation}>
-            <Text>
+            <Text style={styles.instructions}>
               Set Location
             </Text>
           </TouchableHighlight>

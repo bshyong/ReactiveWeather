@@ -6,6 +6,7 @@
 var React = require('react-native');
 var Router = require('react-native-router');
 var HomePage = require('./pages/home');
+var AddLocationButton = require('./components/add_location_button');
 
 var {
   AppRegistry,
@@ -22,7 +23,10 @@ var homePage = {
 var ReactiveWeather = React.createClass({
   render: function() {
     return (
-      <Router firstRoute={homePage} />
+      <Router
+        firstRoute={homePage}
+        rightCorner={AddLocationButton}
+      />
     );
   }
 });
